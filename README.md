@@ -2,7 +2,7 @@
 
 # A very simple library to send events to your google analytics for GO
 
-Analytics v0
+Analytics v0.1
 =============================
 
 The library creates an object used to send simple events to a google analytics property
@@ -32,9 +32,13 @@ function main() {
 
   // Creates a UUID if we need one
   UUID := analytics.UUID()
+  UA.SetUUID(UUID)
+  
+  // sets geo (optional, recommended), generally based on the IP of the visitor
+  UA.SetGeoID("JP")   // japan
   
   // When you need to fire an event:
-  UA.Event("event-category", "event-action", "event-label", <event-value>, UUID)
+  UA.Event("event-category", "event-action", "event-label", <event-value>)
   
   // do something... 
 }
@@ -45,6 +49,17 @@ If your code attends more than one user (web server or so), be sure to keep the 
 If your code does not attend users or session, but processes, you may use a UUID per process or even one single hardcoded UUID. 
 Google uses the UUID to count unique sessions/users in analytics.
 
+Notes on GEOID, added 2019-05-08:
+-----------------------
+The geoid is the ISO country 2 letters or city (see google manuals). It is set once and used when sendint the events data to google.
+
+Notes on Multithreading:
+-----------------------
+If you use the analytics on a multithread server (web server for instance), every hit implies a DIFFERENT set of basic data (UUID, GeoID, etc)
+so it is highly recommended to create the UA object in EACH THREAD instead of a one global, since every thread will send a differend UUID and GeoID.
+
+
+
 
 TO DO:
 ======
@@ -53,6 +68,13 @@ TO DO:
 
 Version Changes Control
 =======================
+
+V0.2.0 - 2019-05-08
+-----------------------
+- Added support for geoid parameter
+- UUID set once only as geoid parameter
+- Event funcion does not have anymore the UUID parameter
+- Added basic test unit
 
 V0.0.1 - 2019-04-05
 -----------------------
